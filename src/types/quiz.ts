@@ -13,9 +13,9 @@ export interface Answer {
   };
 }
 
-export interface EmythResult {
-  name: string;
+export interface PizzaResult {
   pizzaName: string;
+  emythType: string;
   tagline: string;
   description: string;
   personality: string;
@@ -24,6 +24,8 @@ export interface EmythResult {
   balanceTip: string;
   traits: string[];
   color: string;
+  image: string;
 }
 
 export type EmythType = 'entrepreneur' | 'manager' | 'technician';
+export type PizzaType = 'hawaiian' | 'cheese' | 'margherita' | 'pepperoni' | 'bbqChicken' | 'quattroFormaggi' | 'supreme';

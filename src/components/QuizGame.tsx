@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { questions, emythResults } from '../data/quizData';
-import { EmythType } from '../types/quiz';
+import { questions, pizzaResults, pizzaColors } from '../data/quizData';
+import { EmythType, PizzaType } from '../types/quiz';
 import { ArrowRight, RotateCcw, Share } from 'lucide-react';
 import PieChart from './PieChart';
 
@@ -58,7 +58,6 @@ const QuizGame: React.FC = () => {
     const sum = rounded.entrepreneur + rounded.manager + rounded.technician;
     if (sum !== 100) {
       const diff = 100 - sum;
-      // Add/subtract from the largest value
       const maxKey = Object.entries(rounded).reduce((a, b) =>
         b[1] > a[1] ? b : a
       )[0] as EmythType;
@@ -68,11 +67,48 @@ const QuizGame: React.FC = () => {
     return rounded;
   };
 
-  const getPrimaryType = (): EmythType => {
-    const maxScore = Math.max(scores.entrepreneur, scores.manager, scores.technician);
-    if (scores.entrepreneur === maxScore) return 'entrepreneur';
-    if (scores.manager === maxScore) return 'manager';
-    return 'technician';
+  const getPizzaType = (): PizzaType => {
+    const percentages = calculatePercentages();
+    const { entrepreneur: e, manager: m, technician: t } = percentages;
+
+    // Sort to find primary and secondary
+    const sorted = [
+      { type: 'entrepreneur', value: e },
+      { type: 'manager', value: m },
+      { type: 'technician', value: t }
+    ].sort((a, b) => b.value - a.value);
+
+    const primary = sorted[0];
+    const secondary = sorted[1];
+    const tertiary = sorted[2];
+
+    // Check for balanced (all within 15 points of each other)
+    const maxDiff = primary.value - tertiary.value;
+    if (maxDiff <= 15) {
+      return 'supreme';
+    }
+
+    // Check for pure type (primary is 50%+ AND 20+ points ahead of secondary)
+    if (primary.value >= 50 && (primary.value - secondary.value) >= 20) {
+      if (primary.type === 'entrepreneur') return 'hawaiian';
+      if (primary.type === 'manager') return 'cheese';
+      if (primary.type === 'technician') return 'margherita';
+    }
+
+    // Check for blend (primary and secondary within 15 points, both significantly higher than third)
+    const primarySecondaryDiff = primary.value - secondary.value;
+    if (primarySecondaryDiff <= 15) {
+      const types = [primary.type, secondary.type].sort().join('+');
+
+      if (types === 'entrepreneur+manager') return 'pepperoni';
+      if (types === 'entrepreneur+technician') return 'bbqChicken';
+      if (types === 'manager+technician') return 'quattroFormaggi';
+    }
+
+    // Default to primary type's pizza if no blend detected
+    if (primary.type === 'entrepreneur') return 'hawaiian';
+    if (primary.type === 'manager') return 'cheese';
+    return 'margherita';
   };
 
   const resetQuiz = () => {
@@ -86,34 +122,25 @@ const QuizGame: React.FC = () => {
   };
 
   const shareToX = () => {
-    const result = emythResults[getPrimaryType()];
+    const result = pizzaResults[getPizzaType()];
     const percentages = calculatePercentages();
-    const text = `My E-Myth Pizza Personality: ${result.name}! ${result.pizzaName}
+    const text = `I'm ${result.pizzaName}! ${result.emythType}
 
-${percentages.entrepreneur}% Entrepreneur
+${percentages.entrepreneur}% Dreamer
 ${percentages.manager}% Manager
-${percentages.technician}% Technician
+${percentages.technician}% Pizzaiolo
 
-What's your business archetype? Find out at pizzadao.xyz`;
+What pizza are you? Find out at pizzadao.xyz`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank', 'width=550,height=420');
   };
 
-  const getPizzaImage = (emythType: EmythType): string => {
-    const pizzaImages = {
-      entrepreneur: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=400&fit=crop',
-      manager: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=400&fit=crop',
-      technician: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=400&h=400&fit=crop'
-    };
-    return pizzaImages[emythType];
-  };
-
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const progress = (currentQuestion / questions.length) * 100;
   const percentages = calculatePercentages();
 
   if (showResult) {
-    const primaryType = getPrimaryType();
-    const result = emythResults[primaryType];
+    const pizzaType = getPizzaType();
+    const result = pizzaResults[pizzaType];
 
     return (
       <div className="min-h-screen bg-[#FF393A] flex flex-col items-center justify-start p-4 overflow-y-auto">
@@ -133,14 +160,14 @@ What's your business archetype? Find out at pizzadao.xyz`;
           <div className="p-8 text-center" style={{ backgroundColor: result.color }}>
             <div className="mb-4">
               <img
-                src={getPizzaImage(primaryType)}
+                src={result.image}
                 alt={result.pizzaName}
                 className="w-32 h-32 mx-auto rounded-full object-cover shadow-lg border-4 border-white"
               />
             </div>
             <h1 className="text-2xl font-bold text-white mb-1">You are...</h1>
-            <h2 className="text-3xl font-bold text-white">{result.name}!</h2>
-            <p className="text-lg text-white opacity-90 mt-1">{result.pizzaName}</p>
+            <h2 className="text-3xl font-bold text-white">{result.pizzaName}!</h2>
+            <p className="text-lg text-white opacity-90 mt-1">{result.emythType}</p>
           </div>
 
           <div className="p-8">
@@ -151,7 +178,7 @@ What's your business archetype? Find out at pizzadao.xyz`;
 
             {/* Pie Chart */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Your E-Myth Profile</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Your Pizza Profile</h3>
               <PieChart percentages={percentages} />
             </div>
 
@@ -174,7 +201,7 @@ What's your business archetype? Find out at pizzadao.xyz`;
 
             {/* Balance Tip */}
             <div className="bg-blue-50 rounded-xl p-4 mb-6">
-              <h4 className="font-semibold text-blue-800 mb-2">Balance Tip</h4>
+              <h4 className="font-semibold text-blue-800 mb-2">Pro Tip</h4>
               <p className="text-blue-700 text-sm">{result.balanceTip}</p>
             </div>
 
@@ -216,12 +243,38 @@ What's your business archetype? Find out at pizzadao.xyz`;
 
         {/* Footer spacing */}
         <div className="h-8"></div>
+
+        {/* GitHub + Google Sheets links — bottom right */}
+        <div className="fixed bottom-4 right-4 flex items-center gap-3">
+          <a
+            href="https://docs.google.com/spreadsheets/d/11AGr4RN8RN-wZ9OyDsgXgM9RYpSxkOtH-mkWbJVHD-g/edit?gid=0#gid=0"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://cdn.simpleicons.org/googlesheets/000000"
+              alt="Google Sheets"
+              className="w-8 h-8 filter invert"
+            />
+          </a>
+          <a
+            href="https://github.com/PizzaDAO/emyth-pizza-quiz"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+              alt="GitHub"
+              className="w-8 h-8 filter invert"
+            />
+          </a>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FF393A] flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#FF393A] flex flex-col items-center justify-center p-4 relative">
       {/* Logo Header */}
       <div className="w-full flex justify-center mb-2 pt-4">
         <a href="https://pizzadao.xyz" target="_blank" rel="noopener noreferrer">
@@ -234,12 +287,9 @@ What's your business archetype? Find out at pizzadao.xyz`;
       </div>
 
       <div className="bg-[#FF393A] p-6">
-        <div className="flex items-center justify-center mb-4">
-          <h1 className="text-3xl font-bold text-white text-center">What's Your E-Myth Pizza Type?</h1>
+        <div className="flex items-center justify-center">
+          <h1 className="text-3xl font-bold text-white text-center">What Pizza Are You?</h1>
         </div>
-        <p className="text-white text-center opacity-90 text-sm">
-          Discover if you're an Entrepreneur, Manager, or Technician
-        </p>
       </div>
 
       <div className="max-w-2xl w-full">
@@ -281,6 +331,32 @@ What's your business archetype? Find out at pizzadao.xyz`;
             </div>
           </div>
         </div>
+      </div>
+
+      {/* GitHub + Google Sheets links — bottom right */}
+      <div className="fixed bottom-4 right-4 flex items-center gap-3">
+        <a
+          href="https://docs.google.com/spreadsheets/d/11AGr4RN8RN-wZ9OyDsgXgM9RYpSxkOtH-mkWbJVHD-g/edit?gid=0#gid=0"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://cdn.simpleicons.org/googlesheets/000000"
+            alt="Google Sheets"
+            className="w-8 h-8 filter invert"
+          />
+        </a>
+        <a
+          href="https://github.com/PizzaDAO/emyth-pizza-quiz"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+            alt="GitHub"
+            className="w-8 h-8 filter invert"
+          />
+        </a>
       </div>
     </div>
   );

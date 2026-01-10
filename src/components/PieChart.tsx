@@ -1,6 +1,5 @@
 import React from 'react';
-import { emythColors } from '../data/quizData';
-import { EmythType } from '../types/quiz';
+import { pizzaColors } from '../data/quizData';
 
 interface PieChartProps {
   percentages: {
@@ -10,15 +9,23 @@ interface PieChartProps {
   };
 }
 
+type ScoreType = 'entrepreneur' | 'manager' | 'technician';
+
 const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
   const size = 200;
   const center = size / 2;
   const radius = 80;
 
+  // Map score types to pizza colors
+  const colors: Record<ScoreType, string> = {
+    entrepreneur: pizzaColors.hawaiian,
+    manager: pizzaColors.cheese,
+    technician: pizzaColors.margherita
+  };
+
   // Convert percentages to angles (starting from top, going clockwise)
   const entrepreneurAngle = (percentages.entrepreneur / 100) * 360;
   const managerAngle = (percentages.manager / 100) * 360;
-  const technicianAngle = (percentages.technician / 100) * 360;
 
   // Calculate cumulative angles for positioning
   const entrepreneurEnd = entrepreneurAngle;
@@ -62,16 +69,16 @@ const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
     ].join(' ');
   };
 
-  const segments: { type: EmythType; startAngle: number; endAngle: number; percentage: number }[] = [
+  const segments: { type: ScoreType; startAngle: number; endAngle: number; percentage: number }[] = [
     { type: 'entrepreneur', startAngle: 0, endAngle: entrepreneurEnd, percentage: percentages.entrepreneur },
     { type: 'manager', startAngle: entrepreneurEnd, endAngle: managerEnd, percentage: percentages.manager },
     { type: 'technician', startAngle: managerEnd, endAngle: 360, percentage: percentages.technician }
   ];
 
-  const labels: { type: EmythType; label: string }[] = [
-    { type: 'entrepreneur', label: 'Entrepreneur' },
+  const labels: { type: ScoreType; label: string }[] = [
+    { type: 'entrepreneur', label: 'Dreamer' },
     { type: 'manager', label: 'Manager' },
-    { type: 'technician', label: 'Technician' }
+    { type: 'technician', label: 'Pizzaiolo' }
   ];
 
   return (
@@ -101,7 +108,7 @@ const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
             <path
               key={segment.type}
               d={describeArc(center, center, radius, segment.startAngle, segment.endAngle)}
-              fill={emythColors[segment.type]}
+              fill={colors[segment.type]}
               stroke="white"
               strokeWidth={2}
               className="transition-all duration-500"
@@ -127,11 +134,11 @@ const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
             <div className="flex items-center gap-2">
               <div
                 className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: emythColors[type] }}
+                style={{ backgroundColor: colors[type] }}
               />
               <span className="text-gray-700 font-medium">{label}</span>
             </div>
-            <span className="font-bold" style={{ color: emythColors[type] }}>
+            <span className="font-bold" style={{ color: colors[type] }}>
               {percentages[type]}%
             </span>
           </div>
