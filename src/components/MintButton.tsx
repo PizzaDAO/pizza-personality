@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
 import { Loader2, Check, AlertCircle, ExternalLink, Send } from 'lucide-react';
+import { createPublicClient, http, isAddress } from 'viem';
+import { base, mainnet } from 'viem/chains';
+import { normalize } from 'viem/ens';
 import { useMintNFT, MintStatus } from '../hooks/useMintNFT';
 import { PizzaType, PizzaResult } from '../types/quiz';
+
+const NFT_CONTRACT_ADDRESS = '0x547d2d5eff22ba9fb51ce0c20201258a684f2e6b';
+
+const hasTokenAbi = [
+  {
+    inputs: [{ name: 'owner', type: 'address' }],
+    name: 'hasToken',
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
 
 interface MintButtonProps {
   pizzaType: PizzaType;
@@ -14,14 +29,14 @@ interface MintButtonProps {
   resultsRef: React.RefObject<HTMLDivElement>;
 }
 
-const statusConfig: Record<MintStatus, { text: string; icon: React.ReactNode; disabled: boolean }> = {
-  idle: { text: 'Mint & Send NFT', icon: <Send size={20} />, disabled: false },
+const getStatusConfig = (isUpdate: boolean): Record<MintStatus, { text: string; icon: React.ReactNode; disabled: boolean }> => ({
+  idle: { text: isUpdate ? 'Update NFT' : 'Mint & Send NFT', icon: <Send size={20} />, disabled: false },
   capturing: { text: 'Capturing...', icon: <Loader2 size={20} className="animate-spin" />, disabled: true },
   uploading: { text: 'Uploading...', icon: <Loader2 size={20} className="animate-spin" />, disabled: true },
-  minting: { text: 'Minting...', icon: <Loader2 size={20} className="animate-spin" />, disabled: true },
-  success: { text: 'Minted!', icon: <Check size={20} />, disabled: false },
+  minting: { text: isUpdate ? 'Updating...' : 'Minting...', icon: <Loader2 size={20} className="animate-spin" />, disabled: true },
+  success: { text: isUpdate ? 'Updated!' : 'Minted!', icon: <Check size={20} />, disabled: false },
   error: { text: 'Try Again', icon: <AlertCircle size={20} />, disabled: false },
-};
+});
 
 const MintButton: React.FC<MintButtonProps> = ({
   pizzaType,
@@ -30,8 +45,73 @@ const MintButton: React.FC<MintButtonProps> = ({
   resultsRef,
 }) => {
   const [recipientInput, setRecipientInput] = useState('');
+  const [willBeUpdate, setWillBeUpdate] = useState(false);
+  const [checkingAddress, setCheckingAddress] = useState(false);
   const { status, result: mintResult, mint, reset } = useMintNFT();
-  const config = statusConfig[status];
+
+  // Use willBeUpdate for progress states, but use mintResult.isUpdate for final success state
+  const isUpdate = status === 'success' ? (mintResult.isUpdate ?? false) : willBeUpdate;
+  const config = getStatusConfig(isUpdate)[status];
+
+  const checkIfHasToken = async (address: string) => {
+    if (!address.trim()) {
+      setWillBeUpdate(false);
+      return;
+    }
+
+    setCheckingAddress(true);
+    try {
+      let resolvedAddress: `0x${string}` | null = null;
+
+      if (isAddress(address)) {
+        resolvedAddress = address as `0x${string}`;
+      } else if (address.includes('.')) {
+        // Resolve ENS name
+        const mainnetClient = createPublicClient({
+          chain: mainnet,
+          transport: http('https://eth.llamarpc.com'),
+        });
+        resolvedAddress = await mainnetClient.getEnsAddress({
+          name: normalize(address),
+        });
+      }
+
+      if (resolvedAddress) {
+        const publicClient = createPublicClient({
+          chain: base,
+          transport: http('https://mainnet.base.org'),
+        });
+
+        const hasToken = await publicClient.readContract({
+          address: NFT_CONTRACT_ADDRESS,
+          abi: hasTokenAbi,
+          functionName: 'hasToken',
+          args: [resolvedAddress],
+        });
+
+        setWillBeUpdate(hasToken);
+      } else {
+        setWillBeUpdate(false);
+      }
+    } catch (error) {
+      console.error('Error checking token:', error);
+      setWillBeUpdate(false);
+    } finally {
+      setCheckingAddress(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setRecipientInput(value);
+
+    // Debounce the check - only check when input looks complete
+    if (isAddress(value) || (value.includes('.') && value.length > 4)) {
+      checkIfHasToken(value);
+    } else {
+      setWillBeUpdate(false);
+    }
+  };
 
   const handleClick = async () => {
     if (status === 'success') {
@@ -89,11 +169,17 @@ const MintButton: React.FC<MintButtonProps> = ({
         <input
           type="text"
           value={recipientInput}
-          onChange={(e) => setRecipientInput(e.target.value)}
+          onChange={handleInputChange}
           disabled={isInputDisabled}
           placeholder="0x... or name.eth"
           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
         />
+        {checkingAddress && (
+          <span className="text-xs text-gray-500">Checking address...</span>
+        )}
+        {!checkingAddress && willBeUpdate && status === 'idle' && (
+          <span className="text-xs text-purple-600">This address already has an NFT - it will be updated</span>
+        )}
       </div>
 
       <button
@@ -102,7 +188,7 @@ const MintButton: React.FC<MintButtonProps> = ({
         className={`flex-1 ${getButtonStyle()} text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none`}
       >
         {config.icon}
-        {status === 'success' ? (mintResult.isUpdate ? 'Updated!' : 'Minted!') : config.text}
+        {config.text}
       </button>
 
       {/* Success state - show links */}
