@@ -192,11 +192,11 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
     balanceTip: "Team up with someone who loves systems and someone who loves the craft to bring your big ideas to life.",
     traits: ["Visionary", "Risk-Taking", "Future-Focused", "Bold", "Unconventional"],
     color: "#FFD700",
-    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=400&fit=crop"
+    image: "/hawaiian-pizza.avif"
   },
   cheese: {
     pizzaName: "Cheese Pizza",
-    emythType: "The Manager",
+    emythType: "The Organizer",
     tagline: "The foundation everything else is built on - reliable, essential, and universally trusted.",
     description: "You bring order to chaos and make sure everything runs like a well-oiled pizza oven!",
     personality: "You're the backbone of the pizzeria - the one who makes sure the dough is prepped, the schedule is set, and the kitchen runs smoothly. You're energized by systems, processes, and knowing that things will work tomorrow exactly as they did today. Like cheese pizza, you're the reliable foundation that makes everything else possible.",
@@ -209,7 +209,7 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
   },
   margherita: {
     pizzaName: "Margherita Pizza",
-    emythType: "The Pizzaiolo",
+    emythType: "The Artisan",
     tagline: "Simple ingredients, masterful execution - the craft speaks for itself.",
     description: "You're all about the craft - getting your hands in the dough and making pizza magic!",
     personality: "You're the artisan of the pizzeria - the one who knows that a perfect pizza comes from perfect technique. You're energized by the present moment, the satisfaction of a job well done, and the mastery of your craft. Like a perfect Margherita, you know that excellence comes from mastering the fundamentals and putting quality above all else.",
@@ -218,7 +218,7 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
     balanceTip: "Let the dreamers remind you of the bigger picture, and let the managers help you work smarter, not just harder.",
     traits: ["Skilled", "Detail-Oriented", "Artisan", "Quality-Driven", "Hands-On"],
     color: "#FF6347",
-    image: "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=400&h=400&fit=crop"
+    image: "/margherita-pizza.jpg"
   },
   // Blend Types
   pepperoni: {
@@ -232,7 +232,7 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
     balanceTip: "Don't forget to get your hands in the dough sometimes - staying connected to the craft keeps your vision grounded.",
     traits: ["Strategic", "Scalable", "Popular", "Ambitious", "Organized"],
     color: "#E85D04",
-    image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&h=400&fit=crop"
+    image: "/pepperoni.jpg"
   },
   bbqChicken: {
     pizzaName: "BBQ Chicken Pizza",
@@ -245,7 +245,7 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
     balanceTip: "Partner with the managers to help share your creations with more hungry customers.",
     traits: ["Innovative", "Skilled", "Creative", "Self-Reliant", "Original"],
     color: "#9D4EDD",
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=400&fit=crop"
+    image: "/bbq-chicken.jpg"
   },
   quattroFormaggi: {
     pizzaName: "Quattro Formaggi",
@@ -258,7 +258,7 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
     balanceTip: "Let the dreamers challenge you to think bigger and try something totally different once in a while.",
     traits: ["Expert", "Systematic", "Precise", "Reliable", "Harmonious"],
     color: "#2D6A4F",
-    image: "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=400&h=400&fit=crop"
+    image: "/quattro-formaggi.jpg"
   },
   supreme: {
     pizzaName: "Supreme Pizza",
@@ -271,7 +271,7 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
     balanceTip: "Know when to lean into your dreamer, manager, or pizzaiolo side based on what the moment calls for.",
     traits: ["Versatile", "Balanced", "Adaptive", "Well-Rounded", "Complete"],
     color: "#7B2CBF",
-    image: "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=400&h=400&fit=crop"
+    image: "/supreme-pizza.jpg"
   }
 };
 

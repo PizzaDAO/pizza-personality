@@ -77,14 +77,14 @@ const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
 
   const labels: { type: ScoreType; label: string }[] = [
     { type: 'entrepreneur', label: 'Dreamer' },
-    { type: 'manager', label: 'Manager' },
-    { type: 'technician', label: 'Pizzaiolo' }
+    { type: 'technician', label: 'Artisan' },
+    { type: 'manager', label: 'Organizer' }
   ];
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-row items-center justify-center gap-8">
       {/* SVG Pie Chart */}
-      <svg width={size} height={size} className="drop-shadow-lg">
+      <svg width={size} height={size} className="drop-shadow-lg flex-shrink-0">
         {/* Pizza crust border */}
         <circle
           cx={center}
@@ -128,16 +128,14 @@ const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
       </svg>
 
       {/* Legend */}
-      <div className="mt-6 space-y-2 w-full max-w-xs">
+      <div className="space-y-3">
         {labels.map(({ type, label }) => (
-          <div key={type} className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: colors[type] }}
-              />
-              <span className="text-gray-700 font-medium">{label}</span>
-            </div>
+          <div key={type} className="flex items-center gap-3">
+            <div
+              className="w-4 h-4 rounded-full flex-shrink-0"
+              style={{ backgroundColor: colors[type] }}
+            />
+            <span className="text-gray-700 font-medium w-20">{label}</span>
             <span className="font-bold" style={{ color: colors[type] }}>
               {percentages[type]}%
             </span>

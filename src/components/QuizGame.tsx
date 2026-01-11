@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { questions, pizzaResults, pizzaColors } from '../data/quizData';
 import { EmythType, PizzaType } from '../types/quiz';
 import { ArrowRight, RotateCcw, Share } from 'lucide-react';
 import PieChart from './PieChart';
+import MintButton from './MintButton';
 
 const QuizGame: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -13,6 +14,7 @@ const QuizGame: React.FC = () => {
   });
   const [showResult, setShowResult] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const handleAnswer = (answerIndex: number) => {
     const answer = questions[currentQuestion].answers[answerIndex];
@@ -127,8 +129,8 @@ const QuizGame: React.FC = () => {
     const text = `I'm ${result.pizzaName}! ${result.emythType}
 
 ${percentages.entrepreneur}% Dreamer
-${percentages.manager}% Manager
-${percentages.technician}% Pizzaiolo
+${percentages.technician}% Artisan
+${percentages.manager}% Organizer
 
 What pizza are you? Find out at pizzadao.xyz`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
@@ -155,19 +157,21 @@ What pizza are you? Find out at pizzadao.xyz`;
           </a>
         </div>
 
-        <div className={`max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-500 ${!isTransitioning ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
+        <div ref={resultsRef} className={`max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-500 ${!isTransitioning ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
           {/* Header with pizza image */}
-          <div className="p-8 text-center" style={{ backgroundColor: result.color }}>
-            <div className="mb-4">
+          <div className="flex" style={{ backgroundColor: result.color }}>
+            <div className="w-1/2">
               <img
                 src={result.image}
                 alt={result.pizzaName}
-                className="w-32 h-32 mx-auto rounded-full object-cover shadow-lg border-4 border-white"
+                className="w-full h-full object-cover"
               />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-1">You are...</h1>
-            <h2 className="text-3xl font-bold text-white">{result.pizzaName}!</h2>
-            <p className="text-lg text-white opacity-90 mt-1">{result.emythType}</p>
+            <div className="w-1/2 p-6 flex flex-col justify-center text-center">
+              <h1 className="text-2xl font-bold text-white mb-1">You are...</h1>
+              <h2 className="text-3xl font-bold text-white">{result.pizzaName}!</h2>
+              <p className="text-lg text-white opacity-90 mt-1">{result.emythType}</p>
+            </div>
           </div>
 
           <div className="p-8">
@@ -178,35 +182,43 @@ What pizza are you? Find out at pizzadao.xyz`;
 
             {/* Pie Chart */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Your Pizza Profile</h3>
               <PieChart percentages={percentages} />
             </div>
 
             {/* Personality Description */}
-            <div className="bg-gray-50 rounded-2xl p-6 mb-6">
+            <div className="bg-gray-100 rounded-2xl p-6 mb-6 border-2 border-gray-300">
               <p className="text-gray-700 leading-relaxed">{result.personality}</p>
             </div>
 
             {/* Superpower & Kryptonite */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-              <div className="bg-green-50 rounded-xl p-4">
-                <h4 className="font-semibold text-green-800 mb-2">Your Superpower</h4>
-                <p className="text-green-700 text-sm">{result.superpower}</p>
+              <div className="bg-gray-100 rounded-2xl p-5 border-2 border-green-500">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">💪</span>
+                  <h4 className="font-bold text-gray-800">Your Superpower</h4>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">{result.superpower}</p>
               </div>
-              <div className="bg-red-50 rounded-xl p-4">
-                <h4 className="font-semibold text-red-800 mb-2">Your Kryptonite</h4>
-                <p className="text-red-700 text-sm">{result.kryptonite}</p>
+              <div className="bg-gray-100 rounded-2xl p-5 border-2 border-red-500">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">⚡</span>
+                  <h4 className="font-bold text-gray-800">Your Kryptonite</h4>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">{result.kryptonite}</p>
               </div>
             </div>
 
             {/* Balance Tip */}
-            <div className="bg-blue-50 rounded-xl p-4 mb-6">
-              <h4 className="font-semibold text-blue-800 mb-2">Pro Tip</h4>
-              <p className="text-blue-700 text-sm">{result.balanceTip}</p>
+            <div className="bg-gray-100 rounded-2xl p-5 mb-6 border-2 border-amber-500">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-2xl">💡</span>
+                <h4 className="font-bold text-gray-800">Pro Tip</h4>
+              </div>
+              <p className="text-gray-600 text-sm leading-relaxed">{result.balanceTip}</p>
             </div>
 
             {/* Traits */}
-            <div className="mb-8">
+            <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Your Key Traits</h3>
               <div className="flex flex-wrap gap-2">
                 {result.traits.map((trait, index) => (
@@ -220,8 +232,18 @@ What pizza are you? Find out at pizzadao.xyz`;
                 ))}
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Action Buttons */}
+        {/* Action Buttons - Outside screenshot area */}
+        <div className="max-w-2xl w-full mt-6">
+          <div className="flex flex-col gap-4">
+            <MintButton
+              pizzaType={pizzaType}
+              percentages={percentages}
+              result={result}
+              resultsRef={resultsRef}
+            />
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={shareToX}
@@ -232,7 +254,7 @@ What pizza are you? Find out at pizzadao.xyz`;
               </button>
               <button
                 onClick={resetQuiz}
-                className="flex-1 bg-[#FF393A] hover:bg-red-600 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                className="flex-1 bg-white hover:bg-gray-100 text-black font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
               >
                 <RotateCcw size={20} />
                 Take Again
