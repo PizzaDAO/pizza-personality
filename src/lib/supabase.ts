@@ -20,7 +20,7 @@ export interface NFTMetadata {
   pizza_type: string
   percentages: {
     entrepreneur: number
-    manager: number
+    organizer: number
     technician: number
   }
   traits: string[]

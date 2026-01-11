@@ -7,19 +7,19 @@ export const questions: Question[] = [
     answers: [
       {
         text: "Open a second location - this is our chance to build an empire",
-        scores: { entrepreneur: 3, manager: 0, technician: 1 }
+        scores: { entrepreneur: 3, organizer: 0, technician: 1 }
       },
       {
         text: "Create a budget and strategic plan for sustainable growth",
-        scores: { entrepreneur: 0, manager: 3, technician: 1 }
+        scores: { entrepreneur: 0, organizer: 3, technician: 1 }
       },
       {
         text: "Upgrade the kitchen equipment and perfect our recipes",
-        scores: { entrepreneur: 1, manager: 1, technician: 3 }
+        scores: { entrepreneur: 1, organizer: 1, technician: 3 }
       },
       {
         text: "Research what successful pizzerias have done with similar investments",
-        scores: { entrepreneur: 1, manager: 2, technician: 2 }
+        scores: { entrepreneur: 1, organizer: 2, technician: 2 }
       }
     ]
   },
@@ -29,19 +29,19 @@ export const questions: Question[] = [
     answers: [
       {
         text: "Competition is opportunity - time to differentiate and innovate",
-        scores: { entrepreneur: 3, manager: 1, technician: 0 }
+        scores: { entrepreneur: 3, organizer: 1, technician: 0 }
       },
       {
         text: "Analyze their operations and optimize our processes to stay competitive",
-        scores: { entrepreneur: 0, manager: 3, technician: 1 }
+        scores: { entrepreneur: 0, organizer: 3, technician: 1 }
       },
       {
         text: "Focus on making our pizza even better - quality always wins",
-        scores: { entrepreneur: 0, manager: 1, technician: 3 }
+        scores: { entrepreneur: 0, organizer: 1, technician: 3 }
       },
       {
         text: "See if there's a way to collaborate instead of compete",
-        scores: { entrepreneur: 2, manager: 2, technician: 1 }
+        scores: { entrepreneur: 2, organizer: 2, technician: 1 }
       }
     ]
   },
@@ -51,19 +51,19 @@ export const questions: Question[] = [
     answers: [
       {
         text: "The vision of building something that could change the industry",
-        scores: { entrepreneur: 3, manager: 0, technician: 1 }
+        scores: { entrepreneur: 3, organizer: 0, technician: 1 }
       },
       {
         text: "Designing the operations, hiring processes, and workflows",
-        scores: { entrepreneur: 0, manager: 3, technician: 1 }
+        scores: { entrepreneur: 0, organizer: 3, technician: 1 }
       },
       {
         text: "Crafting the perfect menu and getting the recipes just right",
-        scores: { entrepreneur: 0, manager: 0, technician: 3 }
+        scores: { entrepreneur: 0, organizer: 0, technician: 3 }
       },
       {
         text: "Creating a space where the community can gather",
-        scores: { entrepreneur: 2, manager: 1, technician: 2 }
+        scores: { entrepreneur: 2, organizer: 1, technician: 2 }
       }
     ]
   },
@@ -73,19 +73,19 @@ export const questions: Question[] = [
     answers: [
       {
         text: "Turn this into a loyalty moment - surprise them with something extra",
-        scores: { entrepreneur: 3, manager: 1, technician: 0 }
+        scores: { entrepreneur: 3, organizer: 1, technician: 0 }
       },
       {
         text: "Follow the customer service protocol and document the feedback",
-        scores: { entrepreneur: 1, manager: 3, technician: 0 }
+        scores: { entrepreneur: 1, organizer: 3, technician: 0 }
       },
       {
         text: "Personally remake their order until it's perfect",
-        scores: { entrepreneur: 0, manager: 0, technician: 3 }
+        scores: { entrepreneur: 0, organizer: 0, technician: 3 }
       },
       {
         text: "Listen carefully to understand what went wrong and fix the root cause",
-        scores: { entrepreneur: 1, manager: 2, technician: 2 }
+        scores: { entrepreneur: 1, organizer: 2, technician: 2 }
       }
     ]
   },
@@ -95,19 +95,19 @@ export const questions: Question[] = [
     answers: [
       {
         text: "Dreaming up new concepts, partnerships, and growth opportunities",
-        scores: { entrepreneur: 3, manager: 0, technician: 0 }
+        scores: { entrepreneur: 3, organizer: 0, technician: 0 }
       },
       {
         text: "Organizing schedules, tracking inventory, and improving systems",
-        scores: { entrepreneur: 0, manager: 3, technician: 0 }
+        scores: { entrepreneur: 0, organizer: 3, technician: 0 }
       },
       {
         text: "In the kitchen making pizzas and perfecting techniques",
-        scores: { entrepreneur: 0, manager: 0, technician: 3 }
+        scores: { entrepreneur: 0, organizer: 0, technician: 3 }
       },
       {
         text: "A mix of everything depending on what's needed that day",
-        scores: { entrepreneur: 1, manager: 1, technician: 1 }
+        scores: { entrepreneur: 1, organizer: 1, technician: 1 }
       }
     ]
   },
@@ -117,19 +117,19 @@ export const questions: Question[] = [
     answers: [
       {
         text: "Franchise it globally - this could be the next big thing",
-        scores: { entrepreneur: 3, manager: 1, technician: 0 }
+        scores: { entrepreneur: 3, organizer: 1, technician: 0 }
       },
       {
         text: "Document every process so we can scale without losing quality",
-        scores: { entrepreneur: 1, manager: 3, technician: 0 }
+        scores: { entrepreneur: 1, organizer: 3, technician: 0 }
       },
       {
         text: "Keep perfecting the craft - there's always room to improve",
-        scores: { entrepreneur: 0, manager: 0, technician: 3 }
+        scores: { entrepreneur: 0, organizer: 0, technician: 3 }
       },
       {
         text: "Train apprentices who share my passion for great pizza",
-        scores: { entrepreneur: 1, manager: 1, technician: 2 }
+        scores: { entrepreneur: 1, organizer: 1, technician: 2 }
       }
     ]
   },
@@ -139,19 +139,19 @@ export const questions: Question[] = [
     answers: [
       {
         text: "Seeing the bigger picture and identifying new opportunities",
-        scores: { entrepreneur: 3, manager: 0, technician: 1 }
+        scores: { entrepreneur: 3, organizer: 0, technician: 1 }
       },
       {
         text: "Getting organized and creating systems that work",
-        scores: { entrepreneur: 0, manager: 3, technician: 1 }
+        scores: { entrepreneur: 0, organizer: 3, technician: 1 }
       },
       {
         text: "Teaching hands-on skills and sharing technical knowledge",
-        scores: { entrepreneur: 0, manager: 1, technician: 3 }
+        scores: { entrepreneur: 0, organizer: 1, technician: 3 }
       },
       {
         text: "Whatever they need most in the moment",
-        scores: { entrepreneur: 1, manager: 1, technician: 1 }
+        scores: { entrepreneur: 1, organizer: 1, technician: 1 }
       }
     ]
   },
@@ -161,19 +161,19 @@ export const questions: Question[] = [
     answers: [
       {
         text: "Brainstorm a marketing campaign or event to bring in more customers",
-        scores: { entrepreneur: 3, manager: 1, technician: 0 }
+        scores: { entrepreneur: 3, organizer: 1, technician: 0 }
       },
       {
         text: "Catch up on inventory counts, scheduling, and paperwork",
-        scores: { entrepreneur: 0, manager: 3, technician: 0 }
+        scores: { entrepreneur: 0, organizer: 3, technician: 0 }
       },
       {
         text: "Experiment with new dough recipes or topping combinations",
-        scores: { entrepreneur: 0, manager: 0, technician: 3 }
+        scores: { entrepreneur: 0, organizer: 0, technician: 3 }
       },
       {
         text: "Chat with the regulars and build relationships with customers",
-        scores: { entrepreneur: 2, manager: 1, technician: 1 }
+        scores: { entrepreneur: 2, organizer: 1, technician: 1 }
       }
     ]
   }
@@ -209,14 +209,14 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
   },
   margherita: {
     pizzaName: "Margherita Pizza",
-    emythType: "The Artisan",
+    emythType: "The Artist",
     tagline: "Simple ingredients, masterful execution - the craft speaks for itself.",
     description: "You're all about the craft - getting your hands in the dough and making pizza magic!",
-    personality: "You're the artisan of the pizzeria - the one who knows that a perfect pizza comes from perfect technique. You're energized by the present moment, the satisfaction of a job well done, and the mastery of your craft. Like a perfect Margherita, you know that excellence comes from mastering the fundamentals and putting quality above all else.",
+    personality: "You're the artist of the pizzeria - the one who knows that a perfect pizza comes from perfect technique. You're energized by the present moment, the satisfaction of a job well done, and the mastery of your craft. Like a perfect Margherita, you know that excellence comes from mastering the fundamentals and putting quality above all else.",
     superpower: "Making exceptional pizza through skill, dedication, and attention to detail.",
     kryptonite: "Sometimes it's hard to let others touch your dough, and you might get lost perfecting one pie while orders pile up.",
-    balanceTip: "Let the dreamers remind you of the bigger picture, and let the managers help you work smarter, not just harder.",
-    traits: ["Skilled", "Detail-Oriented", "Artisan", "Quality-Driven", "Hands-On"],
+    balanceTip: "Let the dreamers remind you of the bigger picture, and let the organizers help you work smarter, not just harder.",
+    traits: ["Skilled", "Detail-Oriented", "Artist", "Quality-Driven", "Hands-On"],
     color: "#FF6347",
     image: "/margherita-pizza.jpg"
   },
@@ -242,7 +242,7 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
     personality: "You're the inventor of the pizzeria - someone with bold ideas AND the skills to bring them to life. You're the one experimenting with new flavor combinations at midnight, driven by both creativity and craftsmanship. Like BBQ Chicken pizza, you're not afraid to break the traditional rules - but you do it with genuine skill and taste.",
     superpower: "Creating innovative new pizzas that nobody's ever tasted before.",
     kryptonite: "You might resist sharing your secret recipes or letting others help scale your creations.",
-    balanceTip: "Partner with the managers to help share your creations with more hungry customers.",
+    balanceTip: "Partner with the organizers to help share your creations with more hungry customers.",
     traits: ["Innovative", "Skilled", "Creative", "Self-Reliant", "Original"],
     color: "#9D4EDD",
     image: "/bbq-chicken.jpg"
@@ -265,10 +265,10 @@ export const pizzaResults: Record<PizzaType, PizzaResult> = {
     emythType: "The Full Pie",
     tagline: "A little bit of everything - you adapt to whatever the pizzeria needs.",
     description: "You can dream, organize, AND make great pizza - the complete package!",
-    personality: "You're the Supreme of the pizzeria world - a rare blend of dreamer, manager, and pizzaiolo. You can envision new concepts, build systems to support them, AND do the hands-on work to make incredible pizza. Like a Supreme pizza, you bring variety and completeness to any situation. Your versatility is your greatest topping.",
+    personality: "You're the Supreme of the pizzeria world - a rare blend of dreamer, artist, and organizer. You can envision new concepts, build systems to support them, AND do the hands-on work to make incredible pizza. Like a Supreme pizza, you bring variety and completeness to any situation. Your versatility is your greatest topping.",
     superpower: "Adapting to any situation and filling whatever role the pizzeria needs most.",
     kryptonite: "With so many toppings, you might spread yourself too thin or struggle to pick just one specialty.",
-    balanceTip: "Know when to lean into your dreamer, manager, or pizzaiolo side based on what the moment calls for.",
+    balanceTip: "Know when to lean into your dreamer, artist, or organizer side based on what the moment calls for.",
     traits: ["Versatile", "Balanced", "Adaptive", "Well-Rounded", "Complete"],
     color: "#7B2CBF",
     image: "/supreme-pizza.jpg"

@@ -8,7 +8,7 @@ export interface Answer {
   text: string;
   scores: {
     entrepreneur: number;
-    manager: number;
+    organizer: number;
     technician: number;
   };
 }
@@ -27,5 +27,5 @@ export interface PizzaResult {
   image: string;
 }
 
-export type EmythType = 'entrepreneur' | 'manager' | 'technician';
+export type EmythType = 'entrepreneur' | 'organizer' | 'technician';
 export type PizzaType = 'hawaiian' | 'cheese' | 'margherita' | 'pepperoni' | 'bbqChicken' | 'quattroFormaggi' | 'supreme';

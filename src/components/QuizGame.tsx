@@ -9,7 +9,7 @@ const QuizGame: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [scores, setScores] = useState({
     entrepreneur: 0,
-    manager: 0,
+    organizer: 0,
     technician: 0
   });
   const [showResult, setShowResult] = useState(false);
@@ -38,26 +38,26 @@ const QuizGame: React.FC = () => {
   };
 
   const calculatePercentages = () => {
-    const total = scores.entrepreneur + scores.manager + scores.technician;
+    const total = scores.entrepreneur + scores.organizer + scores.technician;
     if (total === 0) {
-      return { entrepreneur: 33, manager: 34, technician: 33 };
+      return { entrepreneur: 33, organizer: 34, technician: 33 };
     }
 
     const rawPercentages = {
       entrepreneur: (scores.entrepreneur / total) * 100,
-      manager: (scores.manager / total) * 100,
+      organizer: (scores.organizer / total) * 100,
       technician: (scores.technician / total) * 100
     };
 
     // Round to integers that sum to 100
     const rounded = {
       entrepreneur: Math.round(rawPercentages.entrepreneur),
-      manager: Math.round(rawPercentages.manager),
+      organizer: Math.round(rawPercentages.organizer),
       technician: Math.round(rawPercentages.technician)
     };
 
     // Adjust for rounding errors
-    const sum = rounded.entrepreneur + rounded.manager + rounded.technician;
+    const sum = rounded.entrepreneur + rounded.organizer + rounded.technician;
     if (sum !== 100) {
       const diff = 100 - sum;
       const maxKey = Object.entries(rounded).reduce((a, b) =>
@@ -71,12 +71,12 @@ const QuizGame: React.FC = () => {
 
   const getPizzaType = (): PizzaType => {
     const percentages = calculatePercentages();
-    const { entrepreneur: e, manager: m, technician: t } = percentages;
+    const { entrepreneur: e, organizer: m, technician: t } = percentages;
 
     // Sort to find primary and secondary
     const sorted = [
       { type: 'entrepreneur', value: e },
-      { type: 'manager', value: m },
+      { type: 'organizer', value: m },
       { type: 'technician', value: t }
     ].sort((a, b) => b.value - a.value);
 
@@ -93,7 +93,7 @@ const QuizGame: React.FC = () => {
     // Check for pure type (primary is 50%+ AND 20+ points ahead of secondary)
     if (primary.value >= 50 && (primary.value - secondary.value) >= 20) {
       if (primary.type === 'entrepreneur') return 'hawaiian';
-      if (primary.type === 'manager') return 'cheese';
+      if (primary.type === 'organizer') return 'cheese';
       if (primary.type === 'technician') return 'margherita';
     }
 
@@ -102,14 +102,14 @@ const QuizGame: React.FC = () => {
     if (primarySecondaryDiff <= 15) {
       const types = [primary.type, secondary.type].sort().join('+');
 
-      if (types === 'entrepreneur+manager') return 'pepperoni';
+      if (types === 'entrepreneur+organizer') return 'pepperoni';
       if (types === 'entrepreneur+technician') return 'bbqChicken';
-      if (types === 'manager+technician') return 'quattroFormaggi';
+      if (types === 'organizer+technician') return 'quattroFormaggi';
     }
 
     // Default to primary type's pizza if no blend detected
     if (primary.type === 'entrepreneur') return 'hawaiian';
-    if (primary.type === 'manager') return 'cheese';
+    if (primary.type === 'organizer') return 'cheese';
     return 'margherita';
   };
 
@@ -117,7 +117,7 @@ const QuizGame: React.FC = () => {
     setCurrentQuestion(0);
     setScores({
       entrepreneur: 0,
-      manager: 0,
+      organizer: 0,
       technician: 0
     });
     setShowResult(false);
@@ -129,8 +129,8 @@ const QuizGame: React.FC = () => {
     const text = `I'm ${result.pizzaName}! ${result.emythType}
 
 ${percentages.entrepreneur}% Dreamer
-${percentages.technician}% Artisan
-${percentages.manager}% Organizer
+${percentages.technician}% Artist
+${percentages.organizer}% Organizer
 
 What pizza are you? Find out at pizzadao.xyz`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;

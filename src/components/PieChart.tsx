@@ -4,12 +4,12 @@ import { pizzaColors } from '../data/quizData';
 interface PieChartProps {
   percentages: {
     entrepreneur: number;
-    manager: number;
+    organizer: number;
     technician: number;
   };
 }
 
-type ScoreType = 'entrepreneur' | 'manager' | 'technician';
+type ScoreType = 'entrepreneur' | 'organizer' | 'technician';
 
 const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
   const size = 200;
@@ -19,17 +19,17 @@ const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
   // Map score types to pizza colors
   const colors: Record<ScoreType, string> = {
     entrepreneur: pizzaColors.hawaiian,
-    manager: pizzaColors.cheese,
+    organizer: pizzaColors.cheese,
     technician: pizzaColors.margherita
   };
 
   // Convert percentages to angles (starting from top, going clockwise)
   const entrepreneurAngle = (percentages.entrepreneur / 100) * 360;
-  const managerAngle = (percentages.manager / 100) * 360;
+  const organizerAngle = (percentages.organizer / 100) * 360;
 
   // Calculate cumulative angles for positioning
   const entrepreneurEnd = entrepreneurAngle;
-  const managerEnd = entrepreneurEnd + managerAngle;
+  const organizerEnd = entrepreneurEnd + organizerAngle;
 
   // Helper functions for arc calculation
   const polarToCartesian = (
@@ -71,14 +71,14 @@ const PieChart: React.FC<PieChartProps> = ({ percentages }) => {
 
   const segments: { type: ScoreType; startAngle: number; endAngle: number; percentage: number }[] = [
     { type: 'entrepreneur', startAngle: 0, endAngle: entrepreneurEnd, percentage: percentages.entrepreneur },
-    { type: 'manager', startAngle: entrepreneurEnd, endAngle: managerEnd, percentage: percentages.manager },
-    { type: 'technician', startAngle: managerEnd, endAngle: 360, percentage: percentages.technician }
+    { type: 'organizer', startAngle: entrepreneurEnd, endAngle: organizerEnd, percentage: percentages.organizer },
+    { type: 'technician', startAngle: organizerEnd, endAngle: 360, percentage: percentages.technician }
   ];
 
   const labels: { type: ScoreType; label: string }[] = [
     { type: 'entrepreneur', label: 'Dreamer' },
-    { type: 'technician', label: 'Artisan' },
-    { type: 'manager', label: 'Organizer' }
+    { type: 'technician', label: 'Artist' },
+    { type: 'organizer', label: 'Organizer' }
   ];
 
   return (

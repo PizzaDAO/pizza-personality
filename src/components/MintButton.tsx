@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Loader2, Check, AlertCircle, ExternalLink, Send } from 'lucide-react';
 import { createPublicClient, http, isAddress } from 'viem';
 import { base, mainnet } from 'viem/chains';
@@ -22,7 +22,7 @@ interface MintButtonProps {
   pizzaType: PizzaType;
   percentages: {
     entrepreneur: number;
-    manager: number;
+    organizer: number;
     technician: number;
   };
   result: PizzaResult;
@@ -49,6 +49,10 @@ const MintButton: React.FC<MintButtonProps> = ({
   const [checkingAddress, setCheckingAddress] = useState(false);
   const { status, result: mintResult, mint, reset } = useMintNFT();
 
+  // Track the latest address we're checking to avoid race conditions
+  const latestCheckRef = useRef<string>('');
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // Use willBeUpdate for progress states, but use mintResult.isUpdate for final success state
   const isUpdate = status === 'success' ? (mintResult.isUpdate ?? false) : willBeUpdate;
   const config = getStatusConfig(isUpdate)[status];
@@ -56,10 +60,14 @@ const MintButton: React.FC<MintButtonProps> = ({
   const checkIfHasToken = async (address: string) => {
     if (!address.trim()) {
       setWillBeUpdate(false);
+      setCheckingAddress(false);
       return;
     }
 
+    // Mark this as the address we're checking
+    latestCheckRef.current = address;
     setCheckingAddress(true);
+
     try {
       let resolvedAddress: `0x${string}` | null = null;
 
@@ -71,9 +79,19 @@ const MintButton: React.FC<MintButtonProps> = ({
           chain: mainnet,
           transport: http('https://eth.llamarpc.com'),
         });
-        resolvedAddress = await mainnetClient.getEnsAddress({
-          name: normalize(address),
-        });
+        try {
+          resolvedAddress = await mainnetClient.getEnsAddress({
+            name: normalize(address),
+          });
+        } catch {
+          // Invalid ENS name, ignore
+          resolvedAddress = null;
+        }
+      }
+
+      // Only update state if this is still the latest check
+      if (latestCheckRef.current !== address) {
+        return;
       }
 
       if (resolvedAddress) {
@@ -89,15 +107,23 @@ const MintButton: React.FC<MintButtonProps> = ({
           args: [resolvedAddress],
         });
 
-        setWillBeUpdate(hasToken);
+        // Only update state if this is still the latest check
+        if (latestCheckRef.current === address) {
+          setWillBeUpdate(hasToken);
+          setCheckingAddress(false);
+        }
       } else {
-        setWillBeUpdate(false);
+        if (latestCheckRef.current === address) {
+          setWillBeUpdate(false);
+          setCheckingAddress(false);
+        }
       }
     } catch (error) {
       console.error('Error checking token:', error);
-      setWillBeUpdate(false);
-    } finally {
-      setCheckingAddress(false);
+      if (latestCheckRef.current === address) {
+        setWillBeUpdate(false);
+        setCheckingAddress(false);
+      }
     }
   };
 
@@ -105,13 +131,35 @@ const MintButton: React.FC<MintButtonProps> = ({
     const value = e.target.value;
     setRecipientInput(value);
 
-    // Debounce the check - only check when input looks complete
-    if (isAddress(value) || (value.includes('.') && value.length > 4)) {
+    // Clear any pending debounce
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Check immediately for full addresses, debounce for ENS names
+    if (isAddress(value)) {
       checkIfHasToken(value);
+    } else if (value.includes('.') && value.length > 4) {
+      // Debounce ENS lookups by 500ms to wait for user to finish typing
+      setCheckingAddress(true);
+      debounceTimerRef.current = setTimeout(() => {
+        checkIfHasToken(value);
+      }, 500);
     } else {
+      latestCheckRef.current = '';
       setWillBeUpdate(false);
+      setCheckingAddress(false);
     }
   };
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleClick = async () => {
     if (status === 'success') {
@@ -174,12 +222,10 @@ const MintButton: React.FC<MintButtonProps> = ({
           placeholder="0x... or name.eth"
           className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors disabled:bg-gray-100 disabled:cursor-not-allowed"
         />
-        {checkingAddress && (
-          <span className="text-xs text-gray-500">Checking address...</span>
-        )}
-        {!checkingAddress && willBeUpdate && status === 'idle' && (
-          <span className="text-xs text-purple-600">This address already has an NFT - it will be updated</span>
-        )}
+        <span className="text-xs text-white h-4">
+          {checkingAddress && 'Checking address...'}
+          {!checkingAddress && willBeUpdate && status === 'idle' && 'This address already has an NFT - it will be updated'}
+        </span>
       </div>
 
       <button

@@ -37,7 +37,7 @@ interface UseMintNFTProps {
   pizzaType: PizzaType;
   percentages: {
     entrepreneur: number;
-    manager: number;
+    organizer: number;
     technician: number;
   };
   traits: string[];
@@ -106,8 +106,8 @@ export function useMintNFT() {
           { trait_type: 'Pizza Type', value: props.pizzaName },
           { trait_type: 'Personality', value: props.emythType },
           { trait_type: 'Dreamer', value: props.percentages.entrepreneur, display_type: 'number' },
-          { trait_type: 'Artisan', value: props.percentages.technician, display_type: 'number' },
-          { trait_type: 'Organizer', value: props.percentages.manager, display_type: 'number' },
+          { trait_type: 'Artist', value: props.percentages.technician, display_type: 'number' },
+          { trait_type: 'Organizer', value: props.percentages.organizer, display_type: 'number' },
           ...props.traits.map((trait, i) => ({ trait_type: `Trait ${i + 1}`, value: trait })),
         ],
       };
