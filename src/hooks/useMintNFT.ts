@@ -65,17 +65,42 @@ export function useMintNFT() {
       }
 
       const canvas = await html2canvas(resultsRef.current, {
-        backgroundColor: '#FF393A',
+        backgroundColor: null,
         scale: 2,
         useCORS: true,
         allowTaint: true,
       });
 
+      // Apply rounded corner mask for transparent corners
+      const radius = 24 * 2; // rounded-3xl is ~24px, scale by 2
+      const maskedCanvas = document.createElement('canvas');
+      maskedCanvas.width = canvas.width;
+      maskedCanvas.height = canvas.height;
+      const ctx = maskedCanvas.getContext('2d');
+
+      if (ctx) {
+        // Draw rounded rectangle mask
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(canvas.width - radius, 0);
+        ctx.quadraticCurveTo(canvas.width, 0, canvas.width, radius);
+        ctx.lineTo(canvas.width, canvas.height - radius);
+        ctx.quadraticCurveTo(canvas.width, canvas.height, canvas.width - radius, canvas.height);
+        ctx.lineTo(radius, canvas.height);
+        ctx.quadraticCurveTo(0, canvas.height, 0, canvas.height - radius);
+        ctx.lineTo(0, radius);
+        ctx.quadraticCurveTo(0, 0, radius, 0);
+        ctx.closePath();
+        ctx.clip();
+
+        // Draw the original canvas within the clipped area
+        ctx.drawImage(canvas, 0, 0);
+      }
+
       const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(
+        maskedCanvas.toBlob(
           (b) => b ? resolve(b) : reject(new Error('Failed to create blob')),
-          'image/png',
-          0.95
+          'image/png'
         );
       });
 
@@ -131,23 +156,50 @@ export function useMintNFT() {
         throw new Error(data.error || 'Minting failed');
       }
 
-      // Fetch token ID for the recipient
+      // Fetch token ID for the recipient with retry logic
       const publicClient = createPublicClient({
         chain: base,
         transport: http('https://mainnet.base.org'),
       });
 
-      const tokenId = await publicClient.readContract({
-        address: NFT_CONTRACT_ADDRESS,
-        abi: tokenOfOwnerAbi,
-        functionName: 'tokenOfOwner',
-        args: [data.recipient as `0x${string}`],
-      });
+      let tokenId: bigint | undefined;
+      let attempts = 0;
+      const maxAttempts = 5;
+
+      // Try to fetch token ID with retries (blockchain state may take a moment to update)
+      while (attempts < maxAttempts && !tokenId) {
+        try {
+          tokenId = await publicClient.readContract({
+            address: NFT_CONTRACT_ADDRESS,
+            abi: tokenOfOwnerAbi,
+            functionName: 'tokenOfOwner',
+            args: [data.recipient as `0x${string}`],
+          });
+        } catch (error) {
+          attempts++;
+          if (attempts < maxAttempts) {
+            // Wait a bit before retrying (exponential backoff)
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
+          } else {
+            // If we can't get the token ID after retries, that's okay - the mint still succeeded
+            console.warn('Could not fetch tokenId after', maxAttempts, 'attempts, but mint succeeded');
+          }
+        }
+      }
 
       setStatus('success');
-      setResult({ txHash: data.txHash, recipient: data.recipient, tokenId: tokenId.toString(), isUpdate: data.isUpdate });
+      setResult({
+        txHash: data.txHash,
+        recipient: data.recipient,
+        tokenId: tokenId?.toString(),
+        isUpdate: data.isUpdate
+      });
 
-      return { txHash: data.txHash, tokenId: tokenId.toString(), isUpdate: data.isUpdate };
+      return {
+        txHash: data.txHash,
+        tokenId: tokenId?.toString(),
+        isUpdate: data.isUpdate
+      };
     } catch (error) {
       console.error('Mint error:', error);
       setStatus('error');

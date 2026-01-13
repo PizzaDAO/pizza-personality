@@ -238,16 +238,23 @@ const MintButton: React.FC<MintButtonProps> = ({
       </button>
 
       {/* Success state - show links */}
-      {status === 'success' && mintResult.tokenId && (
-        <div className="flex gap-2 justify-center">
-          <a
-            href={`https://opensea.io/item/base/0x547d2d5eff22ba9fb51ce0c20201258a684f2e6b/${mintResult.tokenId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-white hover:text-gray-200 flex items-center gap-1"
-          >
-            View on OpenSea <ExternalLink size={14} />
-          </a>
+      {status === 'success' && (
+        <div className="flex flex-col gap-2 items-center">
+          {mintResult.tokenId && (
+            <a
+              href={`https://opensea.io/item/base/0x547d2d5eff22ba9fb51ce0c20201258a684f2e6b/${mintResult.tokenId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-white hover:text-gray-200 flex items-center gap-1"
+            >
+              View on OpenSea <ExternalLink size={14} />
+            </a>
+          )}
+          {!mintResult.tokenId && mintResult.txHash && (
+            <p className="text-xs text-white opacity-80">
+              NFT minted! Click button above to view transaction
+            </p>
+          )}
         </div>
       )}
 

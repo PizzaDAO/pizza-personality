@@ -115,12 +115,23 @@ serve(async (req) => {
       args: [recipientAddress],
     })
 
+    // Get current gas price from network
+    const gasPrice = await publicClient.getGasPrice()
+
+    // Set gas parameters with reasonable values for Base
+    // Base typically has low gas prices, but we add a buffer for safety
+    const maxFeePerGas = gasPrice * 2n // 2x current gas price as buffer
+    const maxPriorityFeePerGas = gasPrice // Same as base fee for priority
+
     // Mint or update NFT (one per address)
     const hash = await walletClient.writeContract({
       address: CONTRACT_ADDRESS as `0x${string}`,
       abi: NFT_CONTRACT_ABI,
       functionName: 'mintOrUpdate',
       args: [recipientAddress, metadataUri],
+      gas: 2000000n, // 2 million gas limit (should be more than enough)
+      maxFeePerGas,
+      maxPriorityFeePerGas,
     })
 
     // Wait for transaction confirmation
@@ -141,10 +152,22 @@ serve(async (req) => {
     )
   } catch (error) {
     console.error('Mint error:', error)
+
+    // Check if error is due to insufficient funds in minter wallet
+    const errorMessage = error.message || 'Unknown error'
+    const isInsufficientFunds =
+      errorMessage.toLowerCase().includes('insufficient funds') ||
+      errorMessage.toLowerCase().includes('balance') && errorMessage.toLowerCase().includes('exceeds')
+
+    // Get the minter address dynamically
+    const minterAddress = account.address
+
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || 'Unknown error',
+        error: isInsufficientFunds
+          ? `Minter out of gas, fund here: ${minterAddress}`
+          : errorMessage,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

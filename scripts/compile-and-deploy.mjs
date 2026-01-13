@@ -3,7 +3,11 @@ import { createWalletClient, createPublicClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { base } from 'viem/chains';
 
-const PRIVATE_KEY = '0x9894bbf8b21d3aeec1894f45b4d6b4b8c598a6ed9eefae370df676b689f66299';
+// SECURITY: Never hardcode private keys! Use environment variables
+const PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
+if (!PRIVATE_KEY) {
+  throw new Error('DEPLOYER_PRIVATE_KEY environment variable is required. Usage: DEPLOYER_PRIVATE_KEY=0x... node scripts/compile-and-deploy.mjs');
+}
 
 // Minimal ERC721 contract source
 const CONTRACT_SOURCE = `
